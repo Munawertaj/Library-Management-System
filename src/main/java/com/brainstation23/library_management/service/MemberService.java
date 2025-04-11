@@ -1,5 +1,7 @@
 package com.brainstation23.library_management.service;
 
+import com.brainstation23.library_management.exception.BookNotBorrowedException;
+import com.brainstation23.library_management.exception.MemberNotFoundException;
 import com.brainstation23.library_management.model.Book;
 import com.brainstation23.library_management.model.Member;
 import com.brainstation23.library_management.repository.MemberRepository;
@@ -19,7 +21,7 @@ public class MemberService {
     public Member getMemberById(String memberId) {
         Member member = memberRepo.getMemberById(memberId);
         if (member == null) {
-            System.out.println("Member with id " + memberId + " not found");
+            throw new MemberNotFoundException("Member with id " + memberId + " not found");
         }
         return member;
     }
@@ -34,7 +36,7 @@ public class MemberService {
     public Book returnBook(String memberId, String bookId) {
         Member member = getMemberById(memberId);
         if (!member.getBorrowedBookIds().contains(bookId)) {
-            System.out.println("Member has not borrowed the book with id " + bookId);
+            throw new BookNotBorrowedException("Member has not borrowed the book with id " + bookId);
         }
         Book book = bookService.returnBook(bookId);
         member.returnBook(bookId);

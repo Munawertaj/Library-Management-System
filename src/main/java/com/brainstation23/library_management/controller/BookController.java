@@ -1,5 +1,6 @@
 package com.brainstation23.library_management.controller;
 
+import com.brainstation23.library_management.exception.BookNotFoundException;
 import com.brainstation23.library_management.model.Book;
 import com.brainstation23.library_management.service.BookService;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,12 @@ public class BookController {
 
     @GetMapping("/details/{id}")
     public ResponseEntity<?> getBook(@PathVariable String id) {
-        Book book = bookService.getBookById(id);
-        return ResponseEntity.ok(book);
+        try {
+            Book book = bookService.getBookById(id);
+            return ResponseEntity.ok(book);
+        } catch (BookNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping("/addBook")

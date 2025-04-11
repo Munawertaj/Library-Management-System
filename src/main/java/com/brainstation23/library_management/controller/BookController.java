@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("api/books")
 public class BookController {
 
     private BookService bookService = new BookService();
@@ -20,7 +20,7 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id}")
     public ResponseEntity<?> getBook(@PathVariable String id) {
         Book book = bookService.getBookById(id);
         return ResponseEntity.ok(book);

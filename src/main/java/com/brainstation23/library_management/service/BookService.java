@@ -24,5 +24,24 @@ public class BookService {
         bookRepo.addBook(book);
         return book;
     }
+
+    public Book borrowBook(String id) {
+        Book book = getBookById(id);
+        if (book.getAvailableCopies() <= 0) {
+            System.out.println("No copies available for book: " + book.getTitle());
+        }
+        book.setAvailableCopies(book.getAvailableCopies() - 1);
+        bookRepo.updateBook(book);
+        return book;
+    }
+
+    public Book returnBook(String id) {
+        Book book = getBookById(id);
+        if (book.getAvailableCopies() < book.getTotalCopies()) {
+            book.setAvailableCopies(book.getAvailableCopies() + 1);
+            bookRepo.updateBook(book);
+        }
+        return book;
+    }
 }
 

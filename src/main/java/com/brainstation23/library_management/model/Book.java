@@ -7,6 +7,10 @@ public class Book {
     private int totalCopies;
     private int availableCopies;
 
+    public Book() {
+        // Default constructor required for JSON (de)serialization
+    }
+
     public Book(String id, String title, String author, int totalCopies, int availableCopies) {
         this.id = id;
         this.title = title;

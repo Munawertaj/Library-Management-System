@@ -32,5 +32,9 @@ public class BookRepository {
     public void addBook(Book book) {
         bookStorage.put(book.getId(), book);
     }
+
+    public void updateBook(Book book) {
+        bookStorage.put(book.getId(), book);
+    }
 }
 

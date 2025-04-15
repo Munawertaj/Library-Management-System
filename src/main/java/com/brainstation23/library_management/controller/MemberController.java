@@ -1,9 +1,6 @@
 package com.brainstation23.library_management.controller;
 
-import com.brainstation23.library_management.exception.BookNotBorrowedException;
-import com.brainstation23.library_management.exception.BookNotFoundException;
-import com.brainstation23.library_management.exception.BookNotAvailableException;
-import com.brainstation23.library_management.exception.MemberNotFoundException;
+import com.brainstation23.library_management.exception.*;
 import com.brainstation23.library_management.model.Book;
 import com.brainstation23.library_management.model.Member;
 import com.brainstation23.library_management.service.MemberService;
@@ -54,6 +51,10 @@ public class MemberController {
         } catch (BookNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (BookNotAvailableException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BookCurrentlyBorrowedException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (BorrowLimitExceededException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

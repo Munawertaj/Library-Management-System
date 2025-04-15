@@ -13,7 +13,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/members")
 public class MemberController {
-    private MemberService memberService = new MemberService();
+
+    private final MemberService memberService = new MemberService();
 
     @PostMapping("/addMember")
     public ResponseEntity<Member> addMember(@RequestBody Member member) {
@@ -27,7 +28,7 @@ public class MemberController {
             Member member = memberService.getMemberById(id);
             return ResponseEntity.ok(member);
         } catch (MemberNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return buildErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -37,7 +38,7 @@ public class MemberController {
             List<Book> books = memberService.getBorrowedBooks(id);
             return ResponseEntity.ok(books);
         } catch (MemberNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return buildErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -46,16 +47,10 @@ public class MemberController {
         try {
             Book book = memberService.borrowBook(memberId, bookId);
             return ResponseEntity.ok(book);
-        } catch (MemberNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (BookNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (BookNotAvailableException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (BookCurrentlyBorrowedException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (BorrowLimitExceededException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (MemberNotFoundException | BookNotFoundException e) {
+            return buildErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (BookNotAvailableException | BookCurrentlyBorrowedException | BorrowLimitExceededException e) {
+            return buildErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
@@ -64,13 +59,14 @@ public class MemberController {
         try {
             Book book = memberService.returnBook(memberId, bookId);
             return ResponseEntity.ok(book);
-        } catch (MemberNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (BookNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (MemberNotFoundException | BookNotFoundException e) {
+            return buildErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (BookNotBorrowedException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return buildErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
-}
 
+    private ResponseEntity<String> buildErrorResponse(String message, HttpStatus status) {
+        return ResponseEntity.status(status).body(message);
+    }
+}
